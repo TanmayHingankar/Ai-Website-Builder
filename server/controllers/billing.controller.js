@@ -4,6 +4,9 @@ import Transaction from "../models/transaction.model.js"
 
 export const billing=async (req,res)=>{
 try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+        return res.status(503).json({message:"Stripe is not configured"})
+    }
     const {planType}=req.body
     const userId=req.user._id
     const plan=PLANS[planType]

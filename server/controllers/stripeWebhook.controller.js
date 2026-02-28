@@ -3,6 +3,9 @@ import User from "../models/user.model.js";
 import Transaction from "../models/transaction.model.js";
 
 export const stripeWebhook=async (req,res) => {
+    if (!process.env.STRIPE_WEBHOOK_SECRET) {
+        return res.status(200).json({received:true, skipped:true})
+    }
     const sig=req.headers["stripe-signature"]
     let event;
     try {
