@@ -5,6 +5,7 @@ import connectDb from "./config/db.js"
 import authRouter from "./routes/auth.routes.js"
 import cookieParser from "cookie-parser"
 import cors from "cors"
+import mongoose from "mongoose"
 import userRouter from "./routes/user.routes.js"
 import websiteRouter from "./routes/website.routes.js"
 import billingRouter from "./routes/billing.routes.js"
@@ -29,14 +30,24 @@ app.use("/api/billing",billingRouter)
 app.use("/api/support",supportRouter)
 
 
-const startServer = async () => {
-    await connectDb()
+app.get("/api/health", (req, res) => {
+    const states = ["disconnected", "connected", "connecting", "disconnecting"]
+    const dbState = states[mongoose.connection.readyState] || "unknown"
+    return res.status(200).json({ status: "ok", db: dbState })
+})
+
+const startServer = () => {
     app.listen(port,()=>{
         console.log("server started")
     })
+
+    const tryConnect = async () => {
+        const ok = await connectDb()
+        if (!ok) {
+            setTimeout(tryConnect, 5000)
+        }
+    }
+    tryConnect()
 }
 
-startServer().catch((error) => {
-    console.error("server failed to start:", error?.message || error)
-    process.exit(1)
-})
+startServer()
