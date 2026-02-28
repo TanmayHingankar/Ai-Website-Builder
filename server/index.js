@@ -18,9 +18,30 @@ app.post("/api/stripe/webhook",express.raw({type:"application/json"}),stripeWebh
 const port=process.env.PORT || 5000
 app.use(express.json())
 app.use(cookieParser())
-const CLIENT_URL = process.env.CLIENT_URL || process.env.FRONTEND_URL || "http://localhost:5173"
+app.set("trust proxy", 1)
+
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    process.env.FRONTEND_URL,
+    process.env.CORS_ORIGIN,
+].filter(Boolean)
+
+if (process.env.NODE_ENV !== "production") {
+    allowedOrigins.push("http://localhost:5173")
+}
+
 app.use(cors({
-    origin: CLIENT_URL,
+    origin: (origin, callback) => {
+        if (!origin) {
+            return callback(null, true)
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true)
+        }
+
+        return callback(new Error("Not allowed by CORS"))
+    },
     credentials:true
 }))
 app.use("/api/auth",authRouter)

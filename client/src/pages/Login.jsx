@@ -110,7 +110,7 @@ function Login() {
                   <label className='block text-sm font-medium text-gray-300'>Password</label>
                   <button
                     type='button'
-                    onClick={() => navigate('/forgot-password')}
+                    onClick={() => window.location.href = 'mailto:support@code2cloud.app'}
                     className='text-xs text-blue-400 hover:text-blue-300 transition'
                   >
                     Forgot?

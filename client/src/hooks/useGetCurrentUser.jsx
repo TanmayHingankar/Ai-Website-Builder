@@ -1,4 +1,3 @@
-import React from 'react'
 import { useEffect } from 'react'
 import api from '../services/api'
 import { useDispatch } from 'react-redux'
@@ -19,7 +18,7 @@ function useGetCurrentUser() {
             }
         }
         getCurrentUser()
-    }, [])
+    }, [dispatch])
 }
 
 export default useGetCurrentUser

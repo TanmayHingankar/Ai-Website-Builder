@@ -174,7 +174,7 @@ export const generateWebsite = async (req, res) => {
             return res.status(400).json({ message: "you have not enough credits to generate a webiste" })
         }
 
-        const finalPrompt = masterPrompt.replace("USER_PROMPT", prompt)
+        const finalPrompt = masterPrompt.replace("{USER_PROMPT}", prompt)
         let raw = ""
         let parsed = null
         for (let i = 0; i < 2 && !parsed; i++) {
@@ -188,7 +188,7 @@ export const generateWebsite = async (req, res) => {
 
         }
 
-        if (!parsed.code) {
+        if (!parsed?.code) {
             console.log("ai returned invalid response", raw)
             return res.status(400).json({ message: "ai returned invalid response" })
         }
@@ -303,7 +303,7 @@ RETURN RAW JSON ONLY:
 
         }
 
-        if (!parsed.code) {
+        if (!parsed?.code) {
             console.log("ai returned invalid response", raw)
             return res.status(400).json({ message: "ai returned invalid response" })
         }
@@ -378,7 +378,8 @@ export const deploy=async (req,res)=>{
         }
 
         website.deployed=true
-        website.deployUrl=`${process.env.FRONTEND_URL}/site/${website.slug}`
+        const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || "http://localhost:5173"
+        website.deployUrl=`${frontendUrl}/site/${website.slug}`
         await website.save()
         user.credits = user.credits - CREDIT_COSTS.deploy
         await user.save()

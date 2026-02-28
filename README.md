@@ -96,35 +96,34 @@ Add images in `docs/screenshots/` and update the paths below.
 
 ## Deployment (Render)
 
+Fastest path: use the included `render.yaml` blueprint at repo root.
+
 ### 1) Create MongoDB and Stripe
 - Create a MongoDB Atlas cluster and copy the connection string.
 - Create Stripe account and get secret key + webhook secret.
 
-### 2) Deploy Backend (Render Web Service)
-1. New Web Service -> connect GitHub repo.
-2. Root Directory: `server`
-3. Build Command: `npm install`
-4. Start Command: `npm start`
-5. Add environment variables from `server/.env.example`.
-6. Set `NODE_ENV=production`.
-7. Set `CLIENT_URL` to your frontend Render URL.
-8. Set `FRONTEND_URL` to your frontend Render URL.
-9. Add Stripe webhook to:
-   `https://YOUR_BACKEND_URL/api/stripe/webhook`
+### 2) Deploy with Render Blueprint
+1. Push this repo (including `render.yaml`) to GitHub.
+2. In Render: New + -> Blueprint -> select this repo.
+3. Render will create:
+   - `websitebuilder-api` (backend web service)
+   - `websitebuilder-client` (frontend static site)
+4. Fill all backend secret env vars (`MONGODB_URL`, `JWT_SECRET`, Stripe, SMTP, OpenRouter).
+5. First deploy backend.
+6. Deploy frontend.
+7. After frontend URL is live, update backend env:
+   - `CLIENT_URL=https://YOUR_FRONTEND_URL`
+   - `FRONTEND_URL=https://YOUR_FRONTEND_URL`
+8. Ensure frontend env is:
+   - `VITE_API_BASE_URL=https://YOUR_BACKEND_URL`
+9. Add Stripe webhook:
+   - `https://YOUR_BACKEND_URL/api/stripe/webhook`
 
-### 3) Deploy Frontend (Render Static Site)
-1. New Static Site -> same repo.
-2. Root Directory: `client`
-3. Build Command: `npm install && npm run build`
-4. Publish Directory: `dist`
-5. Environment:
-   `VITE_API_BASE_URL=https://YOUR_BACKEND_URL`
-
-### 4) CORS and Cookies
+### 3) CORS and Cookies
 - Backend sets `sameSite=none` and `secure=true` in production.
 - Ensure frontend and backend are on HTTPS.
 
-### 5) Verify
+### 4) Verify
 - Register/login
 - Purchase credits
 - Generate website
