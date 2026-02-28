@@ -104,7 +104,7 @@ Add images in `docs/screenshots/` and update the paths below.
 1. New Web Service -> connect GitHub repo.
 2. Root Directory: `server`
 3. Build Command: `npm install`
-4. Start Command: `npm run dev`
+4. Start Command: `npm start`
 5. Add environment variables from `server/.env.example`.
 6. Set `NODE_ENV=production`.
 7. Set `CLIENT_URL` to your frontend Render URL.
